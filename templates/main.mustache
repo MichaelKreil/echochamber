@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:fh="http://purl.org/syndication/history/1.0" version="2.0">
+	<channel>
+		<title>{{title}}</title>
+		<link>{{{link}}}</link>
+		<description>{{description}}</description>
+		<lastBuildDate>{{currentDate}}</lastBuildDate>
+		<language>de-DE</language>
+		<generator>{{generator}}</generator>
+		<itunes:author>{{author}}</itunes:author>
+		<itunes:summary>{{description}}</itunes:summary>
+		<itunes:category text="{{category}}" />
+		<itunes:image href="http://31.media.tumblr.com/avatar_7331c8ed0527_512.png" />
+		<image>
+			<url>http://31.media.tumblr.com/avatar_7331c8ed0527_512.png</url>
+		</image>
+		<itunes:subtitle>{{description}}</itunes:subtitle>
+		<itunes:block>no</itunes:block>
+		<itunes:explicit>no</itunes:explicit>
+		{{#items}}
+			{{>item}}
+		{{/items}}
+	</channel>
+</rss>
