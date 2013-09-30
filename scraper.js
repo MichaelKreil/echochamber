@@ -8,42 +8,45 @@ var itemTemplate = fs.readFileSync('./templates/item.mustache', 'utf8');
 var weekDay = ['Sun', 'Mon', 'Tue',  'Wed', 'Thu',  'Fri' , 'Sat'];
 var month = ['Jan','Feb','Mar','Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-request('http://saetchmo.tumblr.com', function (error, response, body) {
-	body = body.replace(/[\s]+/g, ' ');
+fs.writeFileSync('./echochamber.xml', result, 'utf8');
 
-	var feed = {
-		currentDate: formatDate(new Date()),
-		title: 'echochamber',
-		link: 'http://saetchmo.tumblr.com/',
-		description: 'Basstherapie',
-		generator: 'Michael Kreil',
-		author: 'saetchmo',
-		category: 'Music',
-		items: []
-	}
-	
-	var entries = body.split('class="datetime new">');
-	entries.shift();
-	entries.forEach(function (entry) {
+function generateFeed(callback) {
+	request('http://saetchmo.tumblr.com', function (error, response, body) {
+		body = body.replace(/[\s]+/g, ' ');
 
-		var date = entry.match(/^.*?<\/span>/g)[0];
-		date = date.replace(/<.*?>/g, '');
-		feed.items.push({
-			date: formatDate(new Date(date)),
-			media:    find(entry, 'href="', '#', '">Download'),
-			desc:     find(entry, '<div class="caption">', '#', '</div>'),
-			title:    find(entry, 'href="/archive" title="Archives" >', '#', '</a>'),
-			link:     find(entry, '<a title="Permalink" class="time posted" href="', 'http://saetchmo.tumblr.com/post#', '">'),
-			albumart: find(entry, '<img class="floaters" width="270" height="270" src="', '#cover.jpg', '" />'),
-			author: 'saetchmo'
+		var feed = {
+			currentDate: formatDate(new Date()),
+			title: 'echochamber',
+			link: 'http://saetchmo.tumblr.com/',
+			description: 'Basstherapie',
+			generator: 'Michael Kreil',
+			author: 'saetchmo',
+			category: 'Music',
+			items: []
+		}
+		
+		var entries = body.split('class="datetime new">');
+		entries.shift();
+		entries.forEach(function (entry) {
+
+			var date = entry.match(/^.*?<\/span>/g)[0];
+			date = date.replace(/<.*?>/g, '');
+			feed.items.push({
+				date: formatDate(new Date(date)),
+				media:    find(entry, 'href="', '#', '">Download'),
+				desc:     find(entry, '<div class="caption">', '#', '</div>'),
+				title:    find(entry, 'href="/archive" title="Archives" >', '#', '</a>'),
+				link:     find(entry, '<a title="Permalink" class="time posted" href="', 'http://saetchmo.tumblr.com/post#', '">'),
+				albumart: find(entry, '<img class="floaters" width="270" height="270" src="', '#cover.jpg', '" />'),
+				author: 'saetchmo'
+			});
 		});
+
+		//console.log(feed);
+
+		return mustache.render(mainTemplate, feed, {item:itemTemplate});
 	});
-
-	//console.log(feed);
-
-	var result = mustache.render(mainTemplate, feed, {item:itemTemplate});
-	fs.writeFileSync('./echochamber.xml', result, 'utf8');
-})
+};
 
 function find(text, tIn, part, tOut) {
 	function r(text) {
