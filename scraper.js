@@ -1,23 +1,38 @@
+// Config
+var tumblrUrl = 'http://saetchmo.tumblr.com';
+var feedFilename = './echochamber.xml';
+
+
+
+// Modules
 var fs = require('fs');
 var request = require('request');
 var mustache = require('mustache');
 
+
+
+// Template
 var mainTemplate = fs.readFileSync('./templates/main.mustache', 'utf8');
 var itemTemplate = fs.readFileSync('./templates/item.mustache', 'utf8');
 
-var weekDay = ['Sun', 'Mon', 'Tue',  'Wed', 'Thu',  'Fri' , 'Sat'];
-var month = ['Jan','Feb','Mar','Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-fs.writeFileSync('./echochamber.xml', result, 'utf8');
 
+// Main
+generateFeed(function (xml) {
+	fs.writeFileSync(feedFilename, xml, 'utf8');
+})
+
+
+
+// Tumblr2Feed Converter
 function generateFeed(callback) {
-	request('http://saetchmo.tumblr.com', function (error, response, body) {
+	request(tumblrUrl, function (error, response, body) {
 		body = body.replace(/[\s]+/g, ' ');
 
 		var feed = {
 			currentDate: formatDate(new Date()),
 			title: 'echochamber',
-			link: 'http://saetchmo.tumblr.com/',
+			link: tumblrUrl,
 			description: 'Basstherapie',
 			generator: 'Michael Kreil',
 			author: 'saetchmo',
@@ -42,12 +57,13 @@ function generateFeed(callback) {
 			});
 		});
 
-		//console.log(feed);
-
-		return mustache.render(mainTemplate, feed, {item:itemTemplate});
+		callback(mustache.render(mainTemplate, feed, {item:itemTemplate}));
 	});
 };
 
+
+
+// Utilities
 function find(text, tIn, part, tOut) {
 	function r(text) {
 		return text.replace(/[\.\"\/]/g, function (t) {
@@ -67,6 +83,8 @@ function find(text, tIn, part, tOut) {
 	return result;
 }
 
+var weekDay = ['Sun', 'Mon', 'Tue',  'Wed', 'Thu',  'Fri' , 'Sat'];
+var month = ['Jan','Feb','Mar','Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function formatDate(d) {
 	d = d.getTime()+d.getTimezoneOffset()*60000;
 	d = new Date(d);
