@@ -4,10 +4,10 @@
 	},
 	"private": true,
 	"name": "echochamber",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"homepage": "http://github.com/michaelKreil/echochamber",
 	"license": "WTFPL",
-	"repository": {"type": "git", "url": "http://github.com/isaacs/npm.git"},
+	"repository": {"type": "git", "url": "http://github.com/michaelKreil/echochamber.git"},
 	"dependencies": {
 		"request": ">= 2.27.0",
 		"mustache": ">= 0.7.2"
